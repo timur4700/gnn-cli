@@ -98,7 +98,6 @@ class Trainer():
 
         if param_path_dir:
             self.path = Path(param_path_dir) / self.path
-            print(self.path)
 
 
 
@@ -133,7 +132,6 @@ class Trainer():
                 best_val_loss = mean_val_loss 
                 best_epoch = i_epoch
                 self.best_model_val_loss_param = self.model.state_dict()
-                print(self.best_model_val_loss_param)
                 torch.save(self.best_model_val_loss_param, self.path)
 
                   
