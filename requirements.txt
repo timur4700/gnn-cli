@@ -1,0 +1,17 @@
+--extra-index-url https://download.pytorch.org/whl/cu118
+--find-links https://data.pyg.org/whl/torch-2.2.2+cu118.html
+
+numpy==1.26.4
+inquirer==3.4.1
+h5py==3.16.0
+
+rdkit==2026.03.3
+
+torch==2.2.2+cu118
+torchvision==0.17.2+cu118
+torchaudio==2.2.2+cu118
+
+torch-scatter
+torch-sparse
+torch-cluster
+torch-geometric

@@ -1,0 +1,17 @@
+{
+    "file_name": "app_data/current_projects.json",
+    "projects": {
+        "EGNN3": {
+            "wd": "app_data\\saved_projects\\EGNN3",
+            "exists": true,
+            "config_path": "app_data\\saved_projects\\EGNN3\\settings.json",
+            "size": 0.0
+        },
+        "ligand": {
+            "wd": "app_data\\saved_projects\\ligand",
+            "exists": true,
+            "config_path": "app_data\\saved_projects\\ligand\\settings.json",
+            "size": 0.0
+        }
+    }
+}
