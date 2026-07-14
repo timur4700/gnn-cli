@@ -26,12 +26,16 @@ class LigandModel(Module):
         self.mpnn_modules = {'gcn': GCNLayer,
                             'gin': GINlayer,
                             'gat': GATConvLayer}
+
         
         self.pool = utils.make_pooling(glob_pool)
 
 
         self.mpnn_layers = ModuleList([self.mpnn_modules[mpnn_type](node_input_dim=hidden_dim,
-                                                                 node_hidden_dim=hidden_dim, edge_attr=edge_attr, edge_dim=edge_dim) for _ in range(num_mpnn_layers)])
+                                                                    node_hidden_dim=hidden_dim, 
+                                                                    edge_attr=edge_attr, 
+                                                                    edge_dim=edge_dim) for _ in 
+                                                                        range(num_mpnn_layers)])
 
         self.scalar_head = Sequential(Linear(hidden_dim, hidden_dim), 
                                    make_act_function(act_function)(), 

@@ -11,16 +11,14 @@ def delete_proj(prj_name):
         return None
 
     if not prj_name:
-
         available_projects = [k for k in state.APP_STATE.projects.projects.keys()]
         prj_name = interactive.query('Select project to delete: ', available_projects, False)
 
-    func.find_project(prj_name, state.APP_STATE)
+    project = func.load_global_prj_info(prj_name, state.APP_STATE)
 
-    directory = state.APP_STATE.projects.projects[prj_name]['wd']
+    directory = project.wd
 
     shutil.rmtree(directory)
     state.APP_STATE.projects.delete(prj_name)
 
     print(f'The project {prj_name} was successfully deleted.')
-

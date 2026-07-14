@@ -27,6 +27,14 @@ def make_loss_func(loss: Literal['mse']):
         return MSELoss
 
 
+def rp_calc(y_test: np.ndarray, y_hat: np.ndarray):
+    return pearsonr(y_test, y_hat)[0]
+
+
+def rs_calc(y_test: np.ndarray, y_hat: np.ndarray):
+    return spearmanr(y_test, y_hat)[0]
+
+
 
 class Trainer():
     def __init__(self,
@@ -216,19 +224,13 @@ class TrainerData():
 
 
 class Predictor():
-    def __init__(self,
-                 calc_rp: bool=True,
-                 calc_rs: bool=True,
-                 calc_r2: bool=True,
-                 calc_rmse: bool=True,
-                 calc_mae: bool=True):
+    def __init__(self):
 
-
-        self.calc_rp = calc_rp
-        self.calc_rs = calc_rs,
-        self.calc_r2 = calc_r2,
-        self.calc_rmse = calc_rmse
-        self.calc_mae = calc_mae
+        self.metric_func = {'Rp': rp_calc,
+                            'Rs': rs_calc,
+                            'R2': r2_score,
+                            'RMSE': rmse,
+                            'MAE': mae}
 
 
     @staticmethod
@@ -265,31 +267,11 @@ class Predictor():
         stats_line = 'Test Prediction Stats: '
         metrics = ''
 
-        if self.calc_rp:
-            rp_value = pearsonr(y_test, y_hat)[0]
-            metrics += f"Rp = {rp_value:.3f} | "
+        for k, v in self.metric_func.items():
 
-        if self.calc_rs:
-            rs_value = spearmanr(y_test, y_hat)[0]
-            metrics += f"Rs = {rs_value:.3f} | "
+            value = v(y_test, y_hat)
+            metrics += f"{k} = {value:.3f} | "
 
-        if self.calc_r2:
-            r2_value = r2_score(y_test, y_hat)
-            metrics += f"R2 = {r2_value:.3f} | "
-
-        if self.calc_rmse:
-            rmse_value = rmse(y_test, y_hat)
-            metrics += f"RMSE = {rmse_value:.3f} | "
-
-        if self.calc_mae:
-            mae_value = mae(y_test, y_hat)
-            metrics += f"MAE = {mae_value:.3f} | "
-
-
-        if not metrics:
-            print('Metrics were not provided')
-
-            return None
 
         stats_line += metrics + '\n'
         print(stats_line)

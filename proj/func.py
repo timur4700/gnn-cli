@@ -9,6 +9,7 @@ from train.config import TrainerConfig
 from models.register import MODEL_REGISTER
 
 from dataclasses import dataclass
+from cli import interactive
 
 
 
@@ -22,25 +23,39 @@ class Configs:
 
 
 
+def dir_check(project: app_state.ProjectGlobalInfo) -> bool:
+    if not func.file_checker(project.wd):
+            return False
 
-def dir_config_check(project: app_state.ProjectGlobalInfo) -> bool:
+    return True
 
-    if not (func.file_checker(project.wd) 
-            and func.file_checker(project.config_path)):
+
+def config_check(project: app_state.ProjectGlobalInfo) -> bool:
+    if not func.file_checker(project.config_path):
         return False
     
     return True
 
-def find_project(prj_name, appstate: app_state.AppState) -> app_state.ProjectGlobalInfo:
+
+def load_global_prj_info(prj_name: str,
+                         appstate: app_state.AppState) -> app_state.ProjectGlobalInfo:
 
     project = appstate.projects.projects.get(prj_name, None)
 
     if not project:
         raise FileNotFoundError(f"The project {prj_name} is not registered.")
 
-    project = app_state.ProjectGlobalInfo(**project)
+    if isinstance(project, dict):
+        project = app_state.ProjectGlobalInfo(**project)
 
-    if not dir_config_check(project):
+    return project
+
+
+def find_project(prj_name, appstate: app_state.AppState) -> app_state.ProjectGlobalInfo:
+
+    project = load_global_prj_info(prj_name, appstate)
+
+    if not (dir_check(project) and config_check(project)):
         raise FileNotFoundError(f"The project {prj_name} does not contain global configuration file, or project directory")
 
     return project
@@ -136,6 +151,20 @@ def load_proj_configs(proj_config: app_state.CurrentProjectState) -> Configs:
                    model=model,
                    model_config=model_config,
                    train_config=train_config)
+
+
+def change_train_config(configs: Configs):
+    pass
+
+
+
+def change_config(proj_config: app_state.CurrentProjectState):
+    configs2change = ['Model Config', 'Train Config']
+
+    pass
+
+
+
 
 
 

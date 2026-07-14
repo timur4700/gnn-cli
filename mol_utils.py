@@ -22,6 +22,28 @@ def load_sdf(path: str, mol_type:str='', removehs=True) -> List[Chem.Mol]:
     return mols
 
 
+def atom_codes_prep(*args: Tuple[List[Chem.Mol], ...]) -> Dict[str, int]:
+     
+    uniq_atoms = set()
+    mols = []
+
+    for mol_list in args:
+        if isinstance(mol_list, tuple):
+            for l in mol_list:
+                mols.extend(l)
+
+        else:
+            mols.extend(mol_list)
+
+
+    for mol in mols:
+        for atom in mol.GetAtoms():
+            uniq_atoms.add(atom.GetSymbol())
+
+    return {k:v for v, k in enumerate(uniq_atoms)}
+
+
+
 def combine_protein(train_mols: list, test_mols: list, protein_mols_all: list):
 
     train_mols_lookup = {mol.GetProp('_Name').split('_')[0]:mol for mol in train_mols}
@@ -88,6 +110,8 @@ def prep_sdf(train_sdf_path: str, test_sdf_path,
     if protein:
         assert protein_path
         protein_mols = load_sdf(protein_path, 'protein')
+
+        
         print(f'Number of loaded protein molecules: {len(protein_mols)}\n')
 
         mol_data['train']['mols'], mol_data['test']['mols'] = combine_protein(train_mols, 
@@ -95,8 +119,9 @@ def prep_sdf(train_sdf_path: str, test_sdf_path,
                                                 protein_mols)
 
     mol_data['train']['target'] = get_target_prop(train_mols, prop_name)
-    mol_data['test']['target'] = get_target_prop(train_mols, prop_name)
+    mol_data['test']['target'] = get_target_prop(test_mols, prop_name)
 
+    mol_data['atom_codes'] = atom_codes_prep(train_mols, test_mols)
 
     return mol_data
 

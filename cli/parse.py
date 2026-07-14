@@ -33,7 +33,14 @@ def make_parser() -> argparse.Namespace:
     
     
     train_model = subparsers.add_parser('train', help='Train the prepared model')
-    train_model.add_argument('-n', '--name', type=str, default=None)
+    train_model.add_argument('-n', '--name', type=str, default=None, required=True)
+
+
+    change_config = subparsers.add_parser('change', help='Train the prepared model')
+    change_config.add_argument('-n', '--name', type=str, default=None, required=True)
+    
+
+
 
     delete_prj = subparsers.add_parser('delete', help='Delete project.')
     delete_prj.add_argument('-n', '--name', type=str, default=None)

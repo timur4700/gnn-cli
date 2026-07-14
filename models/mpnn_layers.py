@@ -45,8 +45,7 @@ class ModuleMPNN(Module):
             x = residual + x
             return x
         
-        else:
-            return x
+        return x
 
 
 

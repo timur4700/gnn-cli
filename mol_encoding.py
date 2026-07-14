@@ -246,22 +246,21 @@ class MolFeaturization:
                         feature_matrix = np.zeros((mol.GetNumAtoms(), len(features)))
 
                 for n, atom in enumerate(mol.GetAtoms()):
-                        
-                        if onehot:
-                                vector = []
+                    if onehot:
+                        vector = []
 
-                        for m, feat in enumerate(features):
-                                parameter = node_featurers[feat](atom)
+                    for m, feat in enumerate(features):
+                            parameter = node_featurers[feat](atom)
 
-                                if onehot:
-                                        vector.append(parameter)
-                        
-                                else:
-                                        feature_matrix[n, m] = parameter
+                            if onehot:
+                                vector.append(parameter)
+                                
+                            else:
+                                feature_matrix[n, m] = parameter
 
-                                if onehot:
-                                        vector = np.hstack(vector)
-                                        feature_matrix.append(list(vector))
+                    if onehot:
+                        vector = np.hstack(vector)
+                        feature_matrix.append(list(vector))
 
 
                 if onehot:

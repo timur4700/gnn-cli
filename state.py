@@ -19,23 +19,3 @@ ATOM_CODES = atom_codes = {"O": 0,
 
 
 
-INTRO = f"""
-╔═════════════════════════════════╗
-║                                 ║
-║   ██████╗ ███╗   ██╗███╗   ██╗  ║
-║  ██╔════╝ ████╗  ██║████╗  ██║  ║
-║  ██║  ███╗██╔██╗ ██║██╔██╗ ██║  ║
-║  ██║   ██║██║╚██╗██║██║╚██╗██║  ║
-║  ╚██████╔╝██║ ╚████║██║ ╚████║  ║
-║   ╚═════╝ ╚═╝  ╚═══╝╚═╝  ╚═══╝  ║
-║                                 ║
-╚═════════════════════════════════╝
-      
-Welcome to GNN LAB (R), version {VERSION}. The scientific programm for training molecular GNN models to predict desired properties.      
-Available MPNN models architectures:
-
-- Graph Convolution Networks (GCN)
-- Graph Isomorphism Networks (GIN)
-- Graph Attention Networks (GAT)
-      
-"""

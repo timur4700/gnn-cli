@@ -127,7 +127,7 @@ def double_featurization(func, *args: Chem.Mol):
 def single_graph_prep(mol: Union[Chem.Mol, Tuple[Chem.Mol, Chem.Mol]],
                      target_y,
                      onehot_encoding: bool=False,
-                     atom_dict: bool=False,
+                     atom_dict: dict=None,
                      atom_features: list[str]=[],
                      encode_coords: bool=False,
                      chemical_based_topology: bool=True,
@@ -244,13 +244,18 @@ def main(mol_data, config: app_state.CurrentProjectState, graph_config):
     train_data_path, test_data_path = (config.data.prepared_data.training_data,
                                        config.data.prepared_data.test_data)
 
-    func = partial(single_graph_prep, **asdict(graph_config.graph_config))
+    atom_dict = mol_data['atom_codes']
+    graph_config_dict = asdict(graph_config.graph_config)
+    graph_config_dict['atom_dict'] = atom_dict
+
+    func = partial(single_graph_prep, 
+                   **graph_config_dict)
 
     start = time.perf_counter()
-    train_data: list[Data]=[func(mol, y) for mol, y in 
+    train_data: list[Data]=[func(mol, y, atom_dict=atom_dict) for mol, y in 
                             zip(mol_data['train']['mols'], mol_data['train']['target'])]
     
-    test_data: list[Data]=[func(mol, y) for mol, y in 
+    test_data: list[Data]=[func(mol, y, atom_dict=atom_dict) for mol, y in 
                             zip(mol_data['test']['mols'], mol_data['test']['target'])]
 
     node_dim, edge_dim = check_dimensions(train_data[0])

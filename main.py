@@ -1,16 +1,13 @@
 import os
 from cli.fonts import color_font
 from cli import parse
-from utils import func
 import proj_func
 from proj import func as proj_func_
 
 import state
 import app_state
 
-from dacite import from_dict
-
-
+import messages
 from train import main as main_train
 
 from proj import del_proj
@@ -21,7 +18,7 @@ os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 
 def mkproj(args):
 
-    print(state.INTRO)
+    print(messages.INTRO)
     prj_name = args.name
     proj_func.make(prj_name, args)
 
