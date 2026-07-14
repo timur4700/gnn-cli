@@ -19,13 +19,15 @@ from train.utils import init_train_config
 def make(prj_name: str, args):
 
 
+            if not prj_name:
+                prj_name = Path(func.looped_input('Enter the project name\n', str))
+
 
             if prj_name in state.APP_STATE.projects.projects:
                 raise FileExistsError((f'The project with the name ({prj_name}) already exists.\nPlease choose another name.'))
                    
 
-            if not prj_name:
-                prj_name = Path(func.looped_input('Enter the project name\n', str))
+
 
             prj_name = prj_name.strip()
                 
