@@ -23,11 +23,9 @@ def make(prj_name: str, args):
                 prj_name = Path(func.looped_input('Enter the project name\n', str))
 
 
-            if prj_name in state.APP_STATE.projects.projects:
+            if str(prj_name) in state.APP_STATE.projects.projects:
                 raise FileExistsError((f'The project with the name ({prj_name}) already exists.\nPlease choose another name.'))
                    
-
-
 
             prj_name = prj_name.strip()
                 
