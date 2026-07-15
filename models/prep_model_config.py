@@ -1,5 +1,5 @@
 from models import config_defaults
-from graph_config import GraphPrepConfig
+from graph.graph_config import GraphPrepConfig
 from dataclasses import asdict, Field, fields
 from cli import interactive
 from utils import func
@@ -109,7 +109,6 @@ def init_model_configuration(proj_config,
 
 def change_model_params(configs: Configs):
 
-    model_name = configs.proj_config.model
     model_config = configs.model_config
 
     change_model_config(model_config)

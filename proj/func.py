@@ -4,7 +4,7 @@ from typing import Any
 
 import app_state
 
-from graph_config import GraphPrepConfig
+from graph.graph_config import GraphPrepConfig
 from train.config import TrainerConfig
 from models.register import MODEL_REGISTER
 

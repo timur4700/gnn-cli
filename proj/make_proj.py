@@ -4,9 +4,8 @@ from utils import func
 import random
 
 from proj import func as func_proj, del_proj
-import mol_utils
-import graph_prep
-import graph_config
+from mol_prep import mol_utils
+from graph import graph_prep, graph_config
 from models import prep_model_config
 
 from train.utils import init_train_config

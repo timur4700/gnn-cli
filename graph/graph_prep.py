@@ -4,7 +4,7 @@ from functools import partial
 from dataclasses import asdict
 import torch
 from torch_geometric.data import Data, HeteroData
-import mol_encoding
+from mol_prep import mol_encoding
 
 import numpy as np
 from multiprocessing import Pool
@@ -280,15 +280,12 @@ def main(mol_data, config: app_state.CurrentProjectState, graph_config):
 
 def multi_prep(func, n_proc, mols, targets, names):
 
-    chunk = len(mols) // n_proc
-
     with Pool(n_proc) as pool:
         return pool.starmap(func, zip(mols, targets, names))
      
 
 
 def main_multi(mol_data, config: app_state.CurrentProjectState, graph_config):
-
 
     train_data_path, test_data_path = (config.data.prepared_data.training_data,
                                        config.data.prepared_data.test_data)
