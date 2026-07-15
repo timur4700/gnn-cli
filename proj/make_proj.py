@@ -1,8 +1,5 @@
 import state
 from utils import func
-from pathlib import Path
-
-from cli import interactive
 
 import random
 
@@ -79,31 +76,7 @@ def make(prj_name: str, args):
                   print(f'During preparation an error occured: {e}')
                   del_proj.delete_proj(prj_name)
 
-
-
-def train_model(args):
-    pass
-
-            
-
-
-                 
+            except KeyboardInterrupt:
+                  print()
+                  del_proj.delete_proj(prj_name)
                   
-
-
-
-
-
-
-
-
-
-
-                    
-
-                    
-                    
-
-
-
-                

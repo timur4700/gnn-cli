@@ -43,7 +43,7 @@ INTRO = f"""
 ║                                 ║
 ╚═════════════════════════════════╝
       
-Welcome to GNN LAB (R), version {state.VERSION}. The scientific programm for training molecular GNN models to predict desired properties.      
+Welcome to GNN-CLI, version {state.VERSION}. The scientific programm for training molecular GNN models to predict desired properties.      
 Available MPNN models architectures:
 
 - Graph Convolution Networks (GCN)

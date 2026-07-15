@@ -1,17 +1,15 @@
 import os
 from cli.fonts import color_font
 from cli import parse
-import proj_func
 from proj import func as proj_func_
 
 import state
 import app_state
 
 import messages
-from train import main as main_train, utils
-from models.prep_model_config import change_model_params
 
-from proj import del_proj, change_proj
+from train import main as main_train
+from proj import del_proj, change_proj, make_proj
 
 
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
@@ -21,7 +19,7 @@ def mkproj(args):
 
     print(messages.INTRO)
     prj_name = args.name
-    proj_func.make(prj_name, args)
+    make_proj.make(prj_name, args)
 
 
 def train_model(args):
