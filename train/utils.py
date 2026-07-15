@@ -4,7 +4,7 @@ from rich.console import Console
 from cli import interactive
 from utils import func
 from dataclasses import fields, Field
-from train.config import TrainerConfig
+from train.config import TrainerConfig, Config, TrainerData
 
 from proj.func import Configs
 
@@ -91,10 +91,15 @@ def init_train_config(proj_config) -> TrainerConfig:
 
 
 def change_train_params(configs: Configs):
+    train_config = TrainerConfig()
 
-    train_config = TrainerConfig(**configs.train_config)
+    train_config.config = Config(**configs.train_config.config)
+    train_config.data = TrainerData(**configs.train_config.data)
 
+    change_train_config(train_config.data)
+    change_train_config(train_config.config)
 
+    train_config.save(configs.proj_config.train_params)
 
 
 

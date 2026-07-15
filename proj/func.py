@@ -95,8 +95,12 @@ def inputs_checks(train_path: str, test_path: str, property_name: str, file_form
     if not train_path:
         train_path = func.file_user_input('ligand training molecules', file_formats)
 
+    func.file_checker(train_path)    
+
     if not test_path:
         test_path = func.file_user_input('ligand test molecules', file_formats)
+
+    func.file_checker(test_path)
 
     if not property_name:
         property_name = func.looped_input('Enter the target property name for prediction: ', str)
@@ -151,6 +155,16 @@ def load_proj_configs(proj_config: app_state.CurrentProjectState) -> Configs:
                    model=model,
                    model_config=model_config,
                    train_config=train_config)
+
+
+def set_proj_configs(prj_name, glob_state):
+
+    project = find_project(prj_name, glob_state)
+    proj_config = app_state.load_state(app_state.CurrentProjectState, project.config_path)
+    configs = load_proj_configs(proj_config)
+
+    return configs
+
 
 
 def change_train_config(configs: Configs):

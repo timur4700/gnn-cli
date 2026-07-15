@@ -7,6 +7,7 @@ from rich.table import Table
 from rich.console import Console
 from models.register import MODEL_REGISTER
 
+from proj.func import Configs
 
 
 
@@ -104,6 +105,15 @@ def init_model_configuration(proj_config,
     change_model_config(config)
 
     return config
+
+
+def change_model_params(configs: Configs):
+
+    model_name = configs.proj_config.model
+    model_config = configs.model_config
+
+    change_model_config(model_config)
+    model_config.save(configs.proj_config.model_params)
 
 
 

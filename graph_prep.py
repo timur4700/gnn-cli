@@ -126,6 +126,7 @@ def double_featurization(func, *args: Chem.Mol):
 
 def single_graph_prep(mol: Union[Chem.Mol, Tuple[Chem.Mol, Chem.Mol]],
                      target_y,
+                     name: str=None,
                      onehot_encoding: bool=False,
                      atom_dict: dict=None,
                      atom_features: list[str]=[],
@@ -143,8 +144,11 @@ def single_graph_prep(mol: Union[Chem.Mol, Tuple[Chem.Mol, Chem.Mol]],
     if lig_prot_data:
         name = mol[0].GetProp('_Name').split('_')[0]
 
-    else:
-        name = mol.GetProp('_Name').split('_')[0]
+    elif name is None:
+        if mol.HasProp('_Name'):
+            name = mol.GetProp('_Name').split('_')[0]
+        else:
+            raise ValueError("Molecule name was not provided")
 
 
     y = torch.tensor(target_y, dtype=torch.float32, device='cpu')
@@ -257,13 +261,76 @@ def main(mol_data, config: app_state.CurrentProjectState, graph_config):
     
     test_data: list[Data]=[func(mol, y, atom_dict=atom_dict) for mol, y in 
                             zip(mol_data['test']['mols'], mol_data['test']['target'])]
+    finish = time.perf_counter()
+    node_dim, edge_dim = check_dimensions(train_data[0])
+
+    graph_config.graph_dims.input_dim = node_dim
+    graph_config.graph_dims.edge_dim = edge_dim
+
+
+    print(f'Graph Preparation Execution time: {finish - start}')
+
+    torch.save(train_data, train_data_path)
+    torch.save(test_data, test_data_path)
+    print(f'The training and test data successfuly saved in {train_data_path} and {test_data_path}, respectively')
+
+
+    return train_data, test_data, graph_config
+
+
+def multi_prep(func, n_proc, mols, targets, names):
+
+    chunk = len(mols) // n_proc
+
+    with Pool(n_proc) as pool:
+        return pool.starmap(func, zip(mols, targets, names))
+     
+
+
+def main_multi(mol_data, config: app_state.CurrentProjectState, graph_config):
+
+
+    train_data_path, test_data_path = (config.data.prepared_data.training_data,
+                                       config.data.prepared_data.test_data)
+
+    atom_dict = mol_data['atom_codes']
+    graph_config_dict = asdict(graph_config.graph_config)
+    graph_config_dict['atom_dict'] = atom_dict
+
+    func = partial(single_graph_prep, 
+                   **graph_config_dict)
+
+
+    train_samples = mol_data['train']['mols']
+    y_train = mol_data['train']['target']
+
+    test_samples = mol_data['test']['mols']
+    y_test = mol_data['test']['target']
+
+    num_train = len(train_samples)
+
+    all_samples = train_samples + test_samples
+    all_target = np.concatenate([y_train, y_test])
+
+    mols_names = [mol.GetProp('_Name') for mol in all_samples]
+
+    start = time.perf_counter()
+    data = multi_prep(func, 
+                      all_samples,
+                      all_target,
+                      mols_names)
+
+
+    train_data = data[:num_train]
+    test_data = data[num_train:]
+    finish = time.perf_counter()
 
     node_dim, edge_dim = check_dimensions(train_data[0])
 
     graph_config.graph_dims.input_dim = node_dim
     graph_config.graph_dims.edge_dim = edge_dim
 
-    finish = time.perf_counter()
+
     print(f'Graph Preparation Execution time: {finish - start}')
 
     torch.save(train_data, train_data_path)

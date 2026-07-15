@@ -20,14 +20,14 @@ def make(prj_name: str, args):
 
 
             if not prj_name:
-                prj_name = Path(func.looped_input('Enter the project name\n', str))
+                prj_name = func.looped_input('Enter the project name\n', str)
 
+            prj_name = prj_name.strip()
 
             if str(prj_name) in state.APP_STATE.projects.projects:
                 raise FileExistsError((f'The project with the name ({prj_name}) already exists.\nPlease choose another name.'))
                    
-
-            prj_name = prj_name.strip()
+            
                 
             proj_config = func_proj.configure_new_project(prj_name, state.APP_STATE)
 
@@ -58,7 +58,7 @@ def make(prj_name: str, args):
 
                 graph_prep_config = graph_config.configure_graph_preparation(proj_config)
 
-                train_data, test_data, graph_prep_config = graph_prep.main_multi(data, 
+                train_data, test_data, graph_prep_config = graph_prep.main(data, 
                                                         proj_config, 
                                                         graph_prep_config)
 

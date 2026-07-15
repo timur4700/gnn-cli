@@ -54,7 +54,7 @@ def file_user_input(file_type: str, file_formats: List[str]) -> str:
             if any(user_input.endswith(i) for i in file_formats):
                 return user_input
 
-        print(f"The file does not exists or wrong file formats (supported: {[', '.join(file_formats)]})!")
+        print(f"The file does not exists or wrong file formats (supported: {', '.join(file_formats)})!")
 
 
 

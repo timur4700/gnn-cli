@@ -1,14 +1,25 @@
 from dataclasses import dataclass, field, asdict
 from models import defaults_params
-
+from typing import List, Dict, Type, Union
 
 from utils.func import save_json
 
 
 @dataclass
+class ConfigStorage:
+    cur_proj_configs: Dict[str, Type]
+
+
+
+@dataclass
+class ModelConfig:
+    config: Type | Dict[str, Union[int, float, str, bool]]
+    saved_params: List[str]
+    
+
+
+@dataclass
 class LigandBaseModelConfig:
-
-
 
     input_dim: int=field(default=1,
                              metadata={

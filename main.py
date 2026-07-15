@@ -8,9 +8,10 @@ import state
 import app_state
 
 import messages
-from train import main as main_train
+from train import main as main_train, utils
+from models.prep_model_config import change_model_params
 
-from proj import del_proj
+from proj import del_proj, change_proj
 
 
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
@@ -27,11 +28,13 @@ def train_model(args):
 
     prj_name = args.name
 
-    project = proj_func_.find_project(prj_name, state.APP_STATE)
-    proj_config = app_state.load_state(app_state.CurrentProjectState, project.config_path)
-    configs = proj_func_.load_proj_configs(proj_config)
+    configs = proj_func_.set_proj_configs(prj_name, state.APP_STATE)
     main_train.main(configs)
 
+
+def change(args):
+    change_proj.change_params(args, state.APP_STATE)
+    
 
 
 def delete_project(args):
@@ -46,7 +49,8 @@ def main(args):
     commands = {
         'mkproj': mkproj,
         'train': train_model,
-        'delete': delete_project
+        'delete': delete_project,
+        'change': change
     }
 
     if args.version:

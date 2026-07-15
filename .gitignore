@@ -1,0 +1,14 @@
+# Ignoring all __pycache__ dirs
+__pycache__
+
+
+# Ignoring testing files
+testing_functions.py
+multi_proc_mol_prep.py
+
+# Ignoring saved data
+app_data/
+
+
+# Ignoring VS code settings
+.vscode
