@@ -1,6 +1,7 @@
 from dataclasses import dataclass, field, asdict
 from models import defaults_params
 from typing import List, Dict, Type, Union
+from collections import OrderedDict
 
 from utils.func import save_json
 
@@ -9,12 +10,17 @@ from utils.func import save_json
 class ConfigStorage:
     cur_proj_configs: Dict[str, Type]
 
+    def save(self, wd):
+        save_json(asdict(self), wd)
 
 
 @dataclass
 class ModelConfig:
-    config: Type | Dict[str, Union[int, float, str, bool]]
-    saved_params: List[str]
+    config: Type| OrderedDict | Dict[str, Union[int, float, str, bool]]
+    saved_params: List[str]=field(default_factory=list)
+
+
+
     
 
 
@@ -22,9 +28,9 @@ class ModelConfig:
 class LigandBaseModelConfig:
 
     input_dim: int=field(default=1,
-                             metadata={
-                                        'editable': False
-                                    })
+                        metadata={
+                            'editable': False
+                        })
 
     hidden_dim: int=field(default=64,
                          metadata={
@@ -77,9 +83,6 @@ class LigandBaseModelConfig:
                              'choices': defaults_params.GLOBAL_POOLING,
                              'editable': True
                          })
-
-    def save(self, wd):
-        save_json(asdict(self), wd)
 
         
         

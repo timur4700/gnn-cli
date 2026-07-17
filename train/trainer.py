@@ -1,11 +1,13 @@
 from typing import Literal, Tuple
 from pathlib import Path
+from collections import OrderedDict
 
 from torch.optim import Adam, AdamW
 import torch
 from torch.nn import MSELoss, Module
 from torch_geometric.loader import DataLoader
 from train.utils import split_data
+
 
 from scipy.stats import pearsonr, spearmanr
 
@@ -66,8 +68,6 @@ class Trainer():
 
         self.loss_func = make_loss_func(loss_func)()
 
-        self.best_model_val_loss = None
-
         self.train_losses = []
         self.val_losses = []
 
@@ -80,12 +80,20 @@ class Trainer():
 
 
 
-    def set_model(self, model: Module, model_name: str):
+    def set_model(self, 
+                  model: Module, 
+                  model_params:OrderedDict, 
+                  model_name: str):
+        
         self.model = model
         self.model_name = model_name + f"_seed_{self.seed}"
         self.optimizer = self.optimizer(self.model.parameters(),
                                         self.lr,
                                         weight_decay=self.wd)
+
+        if model_params:
+            self.model.load_state_dict(model_params['model_state_dict'])
+            self.optimizer.load_state_dict(model_params['optimizer_state_dict'])
         
 
 
@@ -140,18 +148,23 @@ class Trainer():
                 best_val_loss = mean_val_loss 
                 best_epoch = i_epoch
                 self.best_model_val_loss_param = self.model.state_dict()
-                torch.save(self.best_model_val_loss_param, self.path)
+                self.save_checkpoint(i_epoch)
 
                   
         
             if self.early_stop:
-                if i_epoch - best_epoch > self.when:
+                cur = i_epoch - best_epoch
+                if cur > self.when:
                     break
         
             self.train_losses.append(mean_train_loss)
             self.val_losses.append(mean_val_loss)
 
             msg = f"Epoch {i_epoch+1:<4} | Train Loss {mean_train_loss:<6.5f} | Test Loss: {mean_val_loss:<6.5f} | Best Test Loss: {best_val_loss:<6.5f}"
+
+            if self.early_stop:
+                early_stop_msg = f'(Until early stop: {int(self.when - cur)})'
+                msg += f"\t{early_stop_msg:<16}"
 
             if self.verbose:
                 print(msg)
@@ -174,6 +187,18 @@ class Trainer():
                 val_losses += self.loss_func(y_hat.squeeze(-1), y_true).item()
 
         return  val_losses
+
+
+    def save_checkpoint(self, epoch: int):
+
+        checkpoint = {
+            'epoch': epoch,
+            'model_state_dict': self.best_model_val_loss_param,
+            'optimizer_state_dict': self.optimizer.state_dict()
+        }
+
+        torch.save(checkpoint, self.path)
+
 
 
 

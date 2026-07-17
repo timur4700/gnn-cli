@@ -6,7 +6,11 @@ from utils import func
 from dataclasses import fields, Field
 from train.config import TrainerConfig, Config, TrainerData
 
-from proj.func import Configs
+from pathlib import Path
+import os
+
+import torch
+from dataclasses import asdict
 
 import numpy as np
 def print_trainer_config(config,
@@ -90,16 +94,53 @@ def init_train_config(proj_config) -> TrainerConfig:
 
 
 
-def change_train_params(configs: Configs):
-    train_config = TrainerConfig()
+def change_train_params(proj_config):
 
-    train_config.config = Config(**configs.train_config.config)
-    train_config.data = TrainerData(**configs.train_config.data)
+    train_config_data = func.load_json(proj_config.train_params)
+
+
+    train_config = TrainerConfig()
+    train_config.config = Config(**train_config_data['config'])
+    train_config.data = TrainerData(**train_config_data['data'])
 
     change_train_config(train_config.data)
     change_train_config(train_config.config)
 
-    train_config.save(configs.proj_config.train_params)
+    train_config.save(proj_config.train_params)
+
+
+def choose_model_params(path):
+
+    saved_params = os.listdir(path) + ['Skip']
+
+    choice = interactive.query('Which model parameter whould you like to load', saved_params, False)
+
+    if choice == 'Skip':
+        return None
+
+    return torch.load(str(Path(path) / choice))
+    
+
+
+
+def set_model_param(train_config: TrainerConfig,
+                    model_config_name: str):
+
+    train_config.data['save_parameter_dir'] = str(Path(train_config.data['save_parameter_dir']) / model_config_name)
+
+    path = train_config.data['save_parameter_dir']
+
+    if not os.path.exists(path):
+        os.makedirs(path)
+
+    else:
+        if not os.listdir(path):
+            return None
+        
+        print(f'Found model parameters for config [{model_config_name}]')
+
+        return choose_model_params(path)
+
 
 
 

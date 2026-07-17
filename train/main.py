@@ -2,16 +2,21 @@ from proj.func import Configs
 from dataclasses import asdict
 from train import trainer as trainer_
 
+from collections import OrderedDict
+
 
 def main(configs: Configs):
 
-    model = configs.model(**asdict(configs.model_config)).to(configs.train_config.config['device'])
+    model_config = configs.model_config
+    model = configs.model(**asdict(model_config)).to(configs.train_config.config['device'])
+
+    model_params = configs.model_params
 
     print('Model Uploaded')
     print(model)
 
     trainer = trainer_.Trainer(**configs.train_config.config)
-    trainer.set_model(model, 'test')
+    trainer.set_model(model, model_params, configs.model_name)
 
     trainer_data = trainer_.TrainerData(**configs.train_config.data)
     trainer_data.prepare_loaders()

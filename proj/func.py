@@ -6,10 +6,13 @@ import app_state
 
 from graph.graph_config import GraphPrepConfig
 from train.config import TrainerConfig
+from train.utils import set_model_param
 from models.register import MODEL_REGISTER
-
+from models.prep_model_config import load_model_config
 from dataclasses import dataclass
 from cli import interactive
+
+from collections import OrderedDict
 
 
 
@@ -17,8 +20,11 @@ from cli import interactive
 class Configs:
     proj_config: app_state.CurrentProjectState
     graph_config: GraphPrepConfig
+    model_name: str
     model: Any
     model_config: Any
+    model_config_name: str
+    model_params: OrderedDict
     train_config: TrainerConfig
 
 
@@ -139,21 +145,28 @@ def load_proj_configs(proj_config: app_state.CurrentProjectState) -> Configs:
     proj_config_checks(proj_config)
 
     model_name = proj_config.model
+
     graph_config = app_state.load_state(GraphPrepConfig,
                                         proj_config.graph_config_path)
 
-    model_config = app_state.load_state(MODEL_REGISTER[model_name].default_config,
-                                        proj_config.model_params)
 
-    model = MODEL_REGISTER[model_name].model
+    model_config_name, model, model_config = load_model_config(proj_config)
+
 
     train_config = app_state.load_state(TrainerConfig, 
                                         proj_config.train_params)
 
+    model_params = set_model_param(
+                    train_config, 
+                    model_config_name)    
+
     return Configs(proj_config=proj_config,
                    graph_config=graph_config,
+                   model_name=model_name,
                    model=model,
+                   model_config_name=model_config_name,
                    model_config=model_config,
+                   model_params=model_params,
                    train_config=train_config)
 
 
@@ -164,18 +177,6 @@ def set_proj_configs(prj_name, glob_state):
     configs = load_proj_configs(proj_config)
 
     return configs
-
-
-
-def change_train_config(configs: Configs):
-    pass
-
-
-
-def change_config(proj_config: app_state.CurrentProjectState):
-    configs2change = ['Model Config', 'Train Config']
-
-    pass
 
 
 
